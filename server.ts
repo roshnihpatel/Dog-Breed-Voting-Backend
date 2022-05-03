@@ -32,6 +32,16 @@ app.get("/", async (req, res) => {
   res.json(dbres.rows);
 });
 
+app.post("/", async (req, res) => {
+  try{
+  console.log(req.body)
+  if(req.body.breedNames[0]){
+  const dbres = await client.query('insert into dogs (breed) values ($1), ($2)', [req.body.breedNames[0], req.body.breedNames[1]]);}}
+  catch(err){
+    console.error(err.message)
+  }
+});
+
 
 //Start the server on the given port
 const port = process.env.PORT;
