@@ -36,11 +36,25 @@ app.post("/", async (req, res) => {
   try{
   console.log(req.body)
   if(req.body.breedNames[0]){
-  const dbres = await client.query('insert into dogs (breed) values ($1), ($2)', [req.body.breedNames[0], req.body.breedNames[1]]);}}
+  const dbres = await client.query('insert into dogs (votes, breed) values ($1,$2) on conflict (breed) do nothing', ['0', req.body.breedNames[0]])
+  await client.query('insert into dogs (votes, breed) values ($1,$2) on conflict (breed) do nothing', ['0', req.body.breedNames[1]])
+  console.log('insert query finished')
+  }}
   catch(err){
     console.error(err.message)
   }
 });
+app.put("/" ,async (req, res) => {
+  try {
+    console.log(req.body.breedName)
+    await client.query('update dogs set votes = votes + 1 where breed = $1 ', [req.body.breedName])
+    console.log('finished query') 
+    
+  } catch (err) {
+    console.error(err.message)
+    
+  }
+})
 
 
 //Start the server on the given port
