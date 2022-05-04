@@ -26,28 +26,32 @@ app.use(cors()) //add CORS support to each following route handler
 const client = new Client(dbConfig);
 client.connect();
 
-app.get("/", async (req, res) => {
+app.get("/dogs", async (req, res) => {
   const dbres = await client.query('select breed from dogs');
   console.log(dbres.rows)
   res.json(dbres.rows);
+  res.status(200).send(dbres.rows)
 });
 
 app.post("/", async (req, res) => {
   try{
   console.log(req.body)
   if(req.body.breedNames[0]){
-  const dbres = await client.query('insert into dogs (votes, breed) values ($1,$2) on conflict (breed) do nothing', ['0', req.body.breedNames[0]])
+  await client.query('insert into dogs (votes, breed) values ($1,$2) on conflict (breed) do nothing', ['0', req.body.breedNames[0]])
   await client.query('insert into dogs (votes, breed) values ($1,$2) on conflict (breed) do nothing', ['0', req.body.breedNames[1]])
   console.log('insert query finished')
+  res.status(200).send({success: true, data: req.body.breedNames})
   }}
   catch(err){
     console.error(err.message)
   }
 });
+
 app.put("/" ,async (req, res) => {
   try {
     console.log(req.body.breedName)
-    await client.query('update dogs set votes = votes + 1 where breed = $1 ', [req.body.breedName])
+    const response = await client.query('update dogs set votes = votes + 1 where breed = $1 RETURNING * ', [req.body.breedName])
+    res.status(200).send({success: true, data: response.rows})
     console.log('finished query') 
     
   } catch (err) {
