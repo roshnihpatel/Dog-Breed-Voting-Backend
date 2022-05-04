@@ -29,9 +29,13 @@ client.connect();
 app.get("/dogs", async (req, res) => {
   const dbres = await client.query('select breed from dogs');
   console.log(dbres.rows)
-  res.json(dbres.rows);
-  res.status(200).send(dbres.rows)
+  res.status(200).json(dbres.rows);
 });
+
+app.get("/topten", async (req, res) => {
+  const dbres = await client.query(`SELECT * FROM dogs ORDER BY votes DESC, breed ASC LIMIT 11`)
+  res.status(200).json(dbres.rows)
+})
 
 app.post("/", async (req, res) => {
   try{
