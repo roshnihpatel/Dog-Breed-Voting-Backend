@@ -33,7 +33,7 @@ app.get("/dogs", async (req, res) => {
 });
 
 app.get("/topten", async (req, res) => {
-  const dbres = await client.query(`SELECT * FROM dogs ORDER BY votes DESC, breed ASC LIMIT 11`)
+  const dbres = await client.query(`SELECT * FROM dogs ORDER BY votes DESC, breed ASC LIMIT 10`)
   res.status(200).json(dbres.rows)
 })
 
