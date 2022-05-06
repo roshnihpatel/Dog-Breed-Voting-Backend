@@ -40,11 +40,14 @@ app.get("/topten", async (req, res) => {
 
 app.post("/", async (req, res) => {
   try{
-  if(req.body.breedNames[0].length>0){
+  if(req.body.breedNames.length>0){
   await client.query('insert into dogs (votes, breed) values ($1,$2) on conflict (breed) do nothing', ['0', req.body.breedNames[0]])
   await client.query('insert into dogs (votes, breed) values ($1,$2) on conflict (breed) do nothing', ['0', req.body.breedNames[1]])
   res.set('Access-Control-Allow-Origin', '*')
   res.status(200).send({success: true, data: req.body.breedNames})
+  }
+  else{
+    res.status(100).send("connection with server secured")
   }}
   catch(err){
     res.send(err.message)
